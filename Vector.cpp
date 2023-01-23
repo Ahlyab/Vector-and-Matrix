@@ -6,41 +6,34 @@
 using namespace std;
 
 // Default constructor
-Vector::Vector() : size(5), elements(0), numbers(new int[size]) {}
+//Vector::Vector() 
+//    : size{ 5 }, elements{0} {
+//        numbers = new int[size]  {0};
+//}
 
 // Parametric constructor
 Vector::Vector(const int size)
-{
-    this->size = size;
-    elements = 0;
-    numbers = new int[size];
+    : size{size}, elements{0} {
+    numbers = new int[size] {0};
 }
 
+// Use of delegating constructor
+Vector::Vector()
+    :Vector(5) {}
+
 // Copy constructor
-Vector::Vector(const Vector &vect)
+Vector::Vector(const Vector& vect)
 {
-    size = vect.size;
-    elements = vect.elements;
-    numbers = new int[size];
-    for (int i = 0; i < elements; i++)
-    {
-        numbers[i] = vect.numbers[i];
-    }
+    copyContent(vect);
 }
 
 // Assignment operator overloaded
-Vector &Vector::operator=(const Vector &vect)
+Vector& Vector::operator=(const Vector& vect)
 {
-    if (this != &vect)
-    {
-        delete[] numbers;
-        size = vect.size;
-        elements = vect.elements;
-        numbers = new int[size];
-        for (int i = 0; i < elements; i++)
-        {
-            numbers[i] = vect.numbers[i];
-        }
+    if (this != &vect) {
+        
+        delete[] this->numbers;
+        copyContent(vect);
     }
     return *this;
 }
@@ -48,16 +41,16 @@ Vector &Vector::operator=(const Vector &vect)
 // Function to add value to end of vector
 void Vector::insert(const int num)
 {
-    if (elements == size)
+    if (size == elements)
     {
-        int *temp = new int[size * 2];
-        for (int i = 0; i < size; i++)
+        size *= 2;
+        int* temp = new int[size];
+        for (int i = 0; i < elements; i++)
         {
             temp[i] = numbers[i];
         }
         delete[] numbers;
         numbers = temp;
-        size *= 2;
     }
     numbers[elements++] = num;
 }
@@ -109,4 +102,30 @@ void Vector::printAllValues() const
 Vector::~Vector()
 {
     delete[] numbers;
+}
+
+int Vector::getSize() const
+{
+    return size;
+}
+
+int Vector::getElements() const
+{
+    return elements;
+}
+
+void Vector::copyContent(const Vector& source)
+{
+    size = source.size;
+    elements = source.elements;
+    numbers = new int[size];
+    for (int i = 0; i < elements; i++)
+    {
+        numbers[i] = source.numbers[i];
+    }
+}
+
+int Vector::getValue(int index)
+{
+    return numbers[index];
 }
